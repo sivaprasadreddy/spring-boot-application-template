@@ -1,14 +1,17 @@
 # Spring Boot Application Template
 This repository is a template for creating a Spring Boot application with commonly used features pre-configured.
 
+[![Build](https://github.com/sivaprasadreddy/spring-boot-application-template/actions/workflows/ci.yml/badge.svg)](https://github.com/sivaprasadreddy/spring-boot-application-template/actions/workflows/ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sivaprasadreddy_spring-boot-application-template&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=sivaprasadreddy_spring-boot-application-template)
+
 ## Features
 * Spring Boot
 * Spring Data JPA
-* Postgres
+* PostgreSQL
 * Flyway for DB migration
 * Springdoc Open API
-* JaCoCo Code Coverage Check
-* SonarQube Code Scan
+* JaCoCo code coverage check
+* SonarQube code quality check
 * OWASP Dependency Check
 * JUnit 5
 * Testcontainers for testing & Local Dev
@@ -49,18 +52,13 @@ $ ./mvnw spotless:apply    <- to format source code
 $ ./mvnw spotless:check    <- to verify source code formatting
 ```
 
-### OWASP Dependency Check
-The [dependency-check-maven](https://jeremylong.github.io/DependencyCheck/dependency-check-maven/) is used to check 
-for security vulnerabilities in the used libraries.
-
-```shell
-$ ./mvnw dependency-check:check
-```
-You can see the generated report at `target/dependency-check-report.html`
-
 ### JaCoCo Code Coverage
 The [jacoco-maven-plugin](https://www.eclemma.org/jacoco/trunk/doc/maven.html) is used to verify the test code coverage.
 If the expected code coverage is not met (default is set to 80%) then the build will fail.
+
+```shell
+$ ./mvnw verify
+```
 
 ### SonarQube Quality Check
 The [sonar-maven-plugin](https://docs.sonarqube.org/latest/analyzing-source-code/scanners/sonarscanner-for-maven/) is configured and 
@@ -71,6 +69,15 @@ You can configure the sonar properties in `sonar-project.properties` and run the
 ```shell
 $ ./mvnw initialize sonar:sonar -Dsonar.login=$SONAR_TOKEN
 ```
+
+### OWASP Dependency Check
+The [dependency-check-maven](https://jeremylong.github.io/DependencyCheck/dependency-check-maven/) is used to check
+for security vulnerabilities in the used libraries.
+
+```shell
+$ ./mvnw dependency-check:check
+```
+You can see the generated report at `target/dependency-check-report.html`
 
 ### Create Docker Image
 The [spring-boot-maven-plugin](https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/htmlsingle/) provides 
