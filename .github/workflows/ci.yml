@@ -37,7 +37,7 @@ jobs:
 
       - if: ${{ github.ref == 'refs/heads/main' }}
         name: Sonar Scan
-        run: ./mvnw sonar:sonar -Dsonar.login=${{ env.SONAR_TOKEN }}
+        run: ./mvnw initialize sonar:sonar -Dsonar.login=${{ env.SONAR_TOKEN }}
 
       - if: ${{ github.ref == 'refs/heads/main' }}
         name: Build and Publish Docker Image
