@@ -1,0 +1,47 @@
+name: Build
+
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/spring-boot-application-template
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Maven Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Test
+        run: ./mvnw verify
+
+      - if: ${{ github.ref == 'refs/heads/main' }}
+        name: OWASP Dependency Check
+        run: ./mvnw dependency-check:check
+
+      - if: ${{ github.ref == 'refs/heads/main' }}
+        name: Sonar Scan
+        run: ./mvnw sonar:sonar -Dsonar.login=${{ env.SONAR_TOKEN }}
+
+      - if: ${{ github.ref == 'refs/heads/main' }}
+        name: Build and Publish Docker Image
+        run: |
+          ./mvnw spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=${{ env.DOCKER_IMAGE_NAME }}
+          docker login -u ${{ env.DOCKER_USERNAME }} -p ${{ env.DOCKER_PASSWORD }}
+          docker push ${{ env.DOCKER_IMAGE_NAME }}
