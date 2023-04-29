@@ -1,0 +1,49 @@
+name: Gradle Build
+
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  DOCKER_IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/spring-boot-application-template
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Test
+        run: ./gradlew build
+
+      - if: ${{ github.ref == 'refs/heads/main' }}
+        name: OWASP Dependency Check
+        run: ./gradlew dependencyCheckAnalyze
+
+      - if: ${{ github.ref == 'refs/heads/master' }}
+        name: Sonar Scan
+        run: ./gradlew sonarqube
+        env:
+          SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
+
+      - if: ${{ github.ref == 'refs/heads/master' }}
+        name: Build and Publish Docker Image
+        run: |
+          ./gradlew bootBuildImage --imageName=${{ env.DOCKER_IMAGE_NAME }}
+           docker login -u ${{ env.DOCKER_USERNAME }} -p ${{ env.DOCKER_PASSWORD }}
+           docker push ${{ env.DOCKER_IMAGE_NAME }}

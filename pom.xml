@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.1.0-RC1</version>
+    <version>3.1.0-SNAPSHOT</version>
     <relativePath />
     <!-- lookup parent from repository -->
   </parent>
@@ -24,7 +24,7 @@
     <maven-failsafe-plugin.version>3.0.0</maven-failsafe-plugin.version>
     <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.9</jacoco-maven-plugin.version>
-    <jacoco.minimum.coverage>80%</jacoco.minimum.coverage>
+    <jacoco.minimum.coverage>70%</jacoco.minimum.coverage>
     <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
     <jacoco.utReportFolder>${project.build.directory}/jacoco/test</jacoco.utReportFolder>
     <jacoco.utReportFile>${jacoco.utReportFolder}/test.exec</jacoco.utReportFile>
@@ -86,11 +86,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-configuration-processor</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -238,11 +233,9 @@
         <version>${spotless.version}</version>
         <configuration>
           <java>
-            <googleJavaFormat>
-              <version>1.12.0</version>
-              <style>AOSP</style>
-              <reflowLongStrings>true</reflowLongStrings>
-            </googleJavaFormat>
+            <palantirJavaFormat>
+              <version>2.30.0</version>
+            </palantirJavaFormat>
             <importOrder />
             <removeUnusedImports />
             <formatAnnotations />

@@ -23,7 +23,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Import(TestcontainersConfig.class)
 class UserControllerTest {
 
-    @Autowired private MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
 
     @Test
     void shouldFetchBookmarksByPageNumber() throws Exception {

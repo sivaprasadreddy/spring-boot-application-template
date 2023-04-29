@@ -1,4 +1,4 @@
-name: Build
+name: Maven Build
 
 env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -15,7 +15,7 @@ on:
 
 jobs:
   build:
-    name: Maven Build
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
