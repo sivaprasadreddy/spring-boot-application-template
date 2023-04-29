@@ -1,7 +1,8 @@
 # Spring Boot Application Template
 This repository is a template for creating a Spring Boot application with commonly used features pre-configured.
 
-[![Build](https://github.com/sivaprasadreddy/spring-boot-application-template/actions/workflows/ci.yml/badge.svg)](https://github.com/sivaprasadreddy/spring-boot-application-template/actions/workflows/ci.yml)
+[![Maven Build](https://github.com/sivaprasadreddy/spring-boot-application-template/actions/workflows/ci-maven.yml/badge.svg)](https://github.com/sivaprasadreddy/spring-boot-application-template/actions/workflows/ci-maven.yml)
+[![Gradle Build](https://github.com/sivaprasadreddy/spring-boot-application-template/actions/workflows/ci-gradle.yml/badge.svg)](https://github.com/sivaprasadreddy/spring-boot-application-template/actions/workflows/ci-gradle.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sivaprasadreddy_spring-boot-application-template&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=sivaprasadreddy_spring-boot-application-template)
 
 ## Features
