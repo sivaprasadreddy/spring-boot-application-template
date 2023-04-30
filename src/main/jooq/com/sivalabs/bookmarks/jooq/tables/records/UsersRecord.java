@@ -5,7 +5,6 @@ package com.sivalabs.bookmarks.jooq.tables.records;
 
 
 import com.sivalabs.bookmarks.jooq.tables.Users;
-import com.sivalabs.bookmarks.jooq.tables.pojos.JooqUsers;
 
 import org.jooq.Field;
 import org.jooq.Record1;
@@ -221,7 +220,7 @@ public class UsersRecord extends UpdatableRecordImpl<UsersRecord> implements Rec
     /**
      * Create a detached, initialised UsersRecord
      */
-    public UsersRecord(JooqUsers value) {
+    public UsersRecord(com.sivalabs.bookmarks.jooq.tables.pojos.Users value) {
         super(Users.USERS);
 
         if (value != null) {

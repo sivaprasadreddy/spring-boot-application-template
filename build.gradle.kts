@@ -1,7 +1,6 @@
+import nu.studer.gradle.jooq.JooqEdition
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
-import java.io.Reader
-import java.util.*
 
 plugins {
 	java
@@ -12,6 +11,7 @@ plugins {
 	id("org.owasp.dependencycheck") version "8.2.1"
 	jacoco
 	id("org.sonarqube") version "4.0.0.2929"
+	id("nu.studer.jooq") version "8.2"
 }
 
 group = "com.sivalabs"
@@ -33,7 +33,7 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.springframework.boot:spring-boot-starter-jooq")
 	implementation("org.flywaydb:flyway-core")
 	runtimeOnly("org.postgresql:postgresql")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -47,6 +47,75 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.testcontainers:postgresql")
+
+	jooqGenerator("org.postgresql:postgresql:42.5.1")
+	jooqGenerator("jakarta.xml.bind:jakarta.xml.bind-api:4.0.0")
+	jooqGenerator("org.testcontainers:postgresql:1.18.0")
+}
+
+val dbUrl = System.getenv("DB_URL") ?: "jdbc:postgresql://localhost:5432/postgres"
+val dbUser = System.getenv("DB_USER") ?: "postgres"
+val dbPassword = System.getenv("DB_PASSWORD") ?: "postgres"
+val dbSchema = "public"
+val dbDriver = "org.postgresql.Driver"
+val jooqVersion = "3.18.3"
+
+jooq {
+	version.set(jooqVersion)
+	edition.set(JooqEdition.OSS)
+
+	configurations {
+		create("main") {
+			generateSchemaSourceOnCompilation.set(true)
+
+			jooqConfiguration.apply {
+				logging = org.jooq.meta.jaxb.Logging.WARN
+				jdbc.apply {
+					driver = dbDriver
+					url = dbUrl
+					user = dbUser
+					password = dbPassword
+				}
+				generator.apply {
+					name = "org.jooq.codegen.DefaultGenerator"
+					database.apply {
+						name = "org.jooq.meta.postgres.PostgresDatabase"
+						inputSchema = dbSchema
+					}
+					generate.apply {
+						isRecords = true
+						isDaos = true
+						isSpringAnnotations = true
+						isPojosEqualsAndHashCode = true
+						isJavaTimeTypes = true
+						isValidationAnnotations = false
+					}
+					target.apply {
+						packageName = "com.sivalabs.bookmarks.jooq"
+						directory = "src/main/jooq"
+					}
+					/*strategy.apply {
+						matchers.apply {
+							tables.apply {
+								get(0).apply {
+									tableClass.apply {
+										pojoClass.apply {
+											transform = MatcherTransformType.PASCAL
+											expression = "JOOQ_\$0"
+										}
+										daoClass.apply {
+											transform = MatcherTransformType.PASCAL
+											expression = "\$0_Repository"
+										}
+									}
+								}
+							}
+						}
+					}*/
+				}
+			}
+		}
+	}
 }
 
 tasks.withType<Test> {
@@ -99,6 +168,7 @@ gitProperties {
 
 spotless {
 	java {
+		target("src/*/java/**/*.java")
 		importOrder()
 		removeUnusedImports()
 		palantirJavaFormat("2.30.0")
@@ -131,8 +201,8 @@ sonarqube {
 		property("sonar.host.url", "https://sonarcloud.io")
 		property("sonar.sources", "src/main/java")
 		property("sonar.tests", "src/test/java")
-		property("sonar.exclusions", "src/main/java/**/config/*.*,src/main/java/**/entities/*.*,src/main/java/**/models/*.*,src/main/java/**/exceptions/*.*,src/main/java/**/utils/*.*,src/main/java/**/*Application.*")
-		property("sonar.test.inclusions", "**/*Test.java,**/*IntegrationTest.java,**/*IT.java")
+		property("sonar.exclusions", "src/main/java/com/sivalabs/bookmarks/jooq/**")
+		property("sonar.test.inclusions", "**/*Test.java,**/*Tests.java,**/*IntegrationTest.java,**/*IT.java")
 		property("sonar.java.codeCoveragePlugin", "jacoco")
 		property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/jacoco/test/jacoco.xml")
 		property("sonar.junit.reportPaths", "$buildDir/test-results/test")

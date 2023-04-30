@@ -283,7 +283,7 @@
                   <excludes>flyway_schema_history</excludes>
                 </database>
                 <!-- Rename the generated POJOs and DAOs classes -->
-                <strategy>
+                <!--<strategy>
                   <matchers>
                     <tables>
                       <table>
@@ -298,7 +298,7 @@
                       </table>
                     </tables>
                   </matchers>
-                </strategy>
+                </strategy>-->
                 <target>
                   <clean>true</clean>
                   <packageName>com.sivalabs.bookmarks.jooq</packageName>

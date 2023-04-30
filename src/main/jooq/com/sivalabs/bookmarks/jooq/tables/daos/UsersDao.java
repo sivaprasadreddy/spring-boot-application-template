@@ -5,7 +5,6 @@ package com.sivalabs.bookmarks.jooq.tables.daos;
 
 
 import com.sivalabs.bookmarks.jooq.tables.Users;
-import com.sivalabs.bookmarks.jooq.tables.pojos.JooqUsers;
 import com.sivalabs.bookmarks.jooq.tables.records.UsersRecord;
 
 import java.util.List;
@@ -22,25 +21,25 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @Repository
-public class UsersRepository extends DAOImpl<UsersRecord, JooqUsers, Long> {
+public class UsersDao extends DAOImpl<UsersRecord, com.sivalabs.bookmarks.jooq.tables.pojos.Users, Long> {
 
     /**
-     * Create a new UsersRepository without any configuration
+     * Create a new UsersDao without any configuration
      */
-    public UsersRepository() {
-        super(Users.USERS, JooqUsers.class);
+    public UsersDao() {
+        super(Users.USERS, com.sivalabs.bookmarks.jooq.tables.pojos.Users.class);
     }
 
     /**
-     * Create a new UsersRepository with an attached configuration
+     * Create a new UsersDao with an attached configuration
      */
     @Autowired
-    public UsersRepository(Configuration configuration) {
-        super(Users.USERS, JooqUsers.class, configuration);
+    public UsersDao(Configuration configuration) {
+        super(Users.USERS, com.sivalabs.bookmarks.jooq.tables.pojos.Users.class, configuration);
     }
 
     @Override
-    public Long getId(JooqUsers object) {
+    public Long getId(com.sivalabs.bookmarks.jooq.tables.pojos.Users object) {
         return object.getId();
     }
 
@@ -48,28 +47,28 @@ public class UsersRepository extends DAOImpl<UsersRecord, JooqUsers, Long> {
      * Fetch records that have <code>id BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<JooqUsers> fetchRangeOfId(Long lowerInclusive, Long upperInclusive) {
+    public List<com.sivalabs.bookmarks.jooq.tables.pojos.Users> fetchRangeOfId(Long lowerInclusive, Long upperInclusive) {
         return fetchRange(Users.USERS.ID, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>id IN (values)</code>
      */
-    public List<JooqUsers> fetchById(Long... values) {
+    public List<com.sivalabs.bookmarks.jooq.tables.pojos.Users> fetchById(Long... values) {
         return fetch(Users.USERS.ID, values);
     }
 
     /**
      * Fetch a unique record that has <code>id = value</code>
      */
-    public JooqUsers fetchOneById(Long value) {
+    public com.sivalabs.bookmarks.jooq.tables.pojos.Users fetchOneById(Long value) {
         return fetchOne(Users.USERS.ID, value);
     }
 
     /**
      * Fetch a unique record that has <code>id = value</code>
      */
-    public Optional<JooqUsers> fetchOptionalById(Long value) {
+    public Optional<com.sivalabs.bookmarks.jooq.tables.pojos.Users> fetchOptionalById(Long value) {
         return fetchOptional(Users.USERS.ID, value);
     }
 
@@ -77,28 +76,28 @@ public class UsersRepository extends DAOImpl<UsersRecord, JooqUsers, Long> {
      * Fetch records that have <code>email BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<JooqUsers> fetchRangeOfEmail(String lowerInclusive, String upperInclusive) {
+    public List<com.sivalabs.bookmarks.jooq.tables.pojos.Users> fetchRangeOfEmail(String lowerInclusive, String upperInclusive) {
         return fetchRange(Users.USERS.EMAIL, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>email IN (values)</code>
      */
-    public List<JooqUsers> fetchByEmail(String... values) {
+    public List<com.sivalabs.bookmarks.jooq.tables.pojos.Users> fetchByEmail(String... values) {
         return fetch(Users.USERS.EMAIL, values);
     }
 
     /**
      * Fetch a unique record that has <code>email = value</code>
      */
-    public JooqUsers fetchOneByEmail(String value) {
+    public com.sivalabs.bookmarks.jooq.tables.pojos.Users fetchOneByEmail(String value) {
         return fetchOne(Users.USERS.EMAIL, value);
     }
 
     /**
      * Fetch a unique record that has <code>email = value</code>
      */
-    public Optional<JooqUsers> fetchOptionalByEmail(String value) {
+    public Optional<com.sivalabs.bookmarks.jooq.tables.pojos.Users> fetchOptionalByEmail(String value) {
         return fetchOptional(Users.USERS.EMAIL, value);
     }
 
@@ -106,14 +105,14 @@ public class UsersRepository extends DAOImpl<UsersRecord, JooqUsers, Long> {
      * Fetch records that have <code>password BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<JooqUsers> fetchRangeOfPassword(String lowerInclusive, String upperInclusive) {
+    public List<com.sivalabs.bookmarks.jooq.tables.pojos.Users> fetchRangeOfPassword(String lowerInclusive, String upperInclusive) {
         return fetchRange(Users.USERS.PASSWORD, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>password IN (values)</code>
      */
-    public List<JooqUsers> fetchByPassword(String... values) {
+    public List<com.sivalabs.bookmarks.jooq.tables.pojos.Users> fetchByPassword(String... values) {
         return fetch(Users.USERS.PASSWORD, values);
     }
 
@@ -121,14 +120,14 @@ public class UsersRepository extends DAOImpl<UsersRecord, JooqUsers, Long> {
      * Fetch records that have <code>name BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<JooqUsers> fetchRangeOfName(String lowerInclusive, String upperInclusive) {
+    public List<com.sivalabs.bookmarks.jooq.tables.pojos.Users> fetchRangeOfName(String lowerInclusive, String upperInclusive) {
         return fetchRange(Users.USERS.NAME, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>name IN (values)</code>
      */
-    public List<JooqUsers> fetchByName(String... values) {
+    public List<com.sivalabs.bookmarks.jooq.tables.pojos.Users> fetchByName(String... values) {
         return fetch(Users.USERS.NAME, values);
     }
 }
