@@ -66,7 +66,7 @@ jooq {
 
 	configurations {
 		create("main") {
-			generateSchemaSourceOnCompilation.set(true)
+			generateSchemaSourceOnCompilation.set(false) //set to true to remove existing jooq code and regenerate
 
 			jooqConfiguration.apply {
 				logging = org.jooq.meta.jaxb.Logging.WARN
@@ -136,6 +136,11 @@ jacoco {
 
 tasks.jacocoTestReport {
 	dependsOn(tasks.test)
+	classDirectories.setFrom(
+		sourceSets.main.get().output.asFileTree.matching {
+			exclude("com/sivalabs/bookmarks/jooq/**")
+		}
+	)
 	reports {
 		xml.required.set(false)
 		csv.required.set(false)
@@ -146,8 +151,10 @@ tasks.jacocoTestReport {
 tasks.jacocoTestCoverageVerification {
 	violationRules {
 		rule {
+			classDirectories.setFrom(sourceSets.main.get().output.asFileTree.matching {
+				exclude("com/sivalabs/bookmarks/jooq/**")
+			})
 			element = "BUNDLE"
-			//includes = listOf("com.sivalabs.*")
 
 			limit {
 				counter = "LINE"
