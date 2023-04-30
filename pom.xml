@@ -28,10 +28,10 @@
     <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
     <jacoco.utReportFolder>${project.build.directory}/jacoco/test</jacoco.utReportFolder>
     <jacoco.utReportFile>${jacoco.utReportFolder}/test.exec</jacoco.utReportFile>
-    <jacoco.itReportFolder>${project.build.directory}/jacoco/integrationTest</jacoco.itReportFolder>
-    <jacoco.itReportFile>${jacoco.itReportFolder}/integrationTest.exec</jacoco.itReportFile>
     <junit.utReportFolder>${project.testresult.directory}/test</junit.utReportFolder>
-    <junit.itReportFolder>${project.testresult.directory}/integrationTest</junit.itReportFolder>
+
+    <db.username>postgres</db.username>
+    <db.password>postgres</db.password>
   </properties>
   <dependencies>
     <dependency>
@@ -44,7 +44,7 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-jpa</artifactId>
+      <artifactId>spring-boot-starter-jooq</artifactId>
     </dependency>
     <dependency>
       <groupId>org.flywaydb</groupId>
@@ -183,6 +183,150 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.codehaus.gmaven</groupId>
+        <artifactId>groovy-maven-plugin</artifactId>
+        <version>2.1.1</version>
+
+        <dependencies>
+          <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${testcontainers.version}</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>testcontainer-start</id>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <source>db = new org.testcontainers.containers.PostgreSQLContainer("postgres:15.2-alpine")
+                        .withUsername("${db.username}")
+                        .withDatabaseName("postgres")
+                        .withPassword("${db.password}")
+                db.start()
+                project.properties.setProperty('db.url', db.getJdbcUrl())
+                project.properties.setProperty('testcontainer.containerid', db.getContainerId())
+                project.properties.setProperty('testcontainer.imageName', db.getDockerImageName())</source>
+            </configuration>
+          </execution>
+          <execution>
+            <id>testcontainer-stop</id>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <phase>test</phase>
+            <configuration>
+              <source>containerId = "${testcontainer.containerid}"
+                imageName = "${testcontainer.imageName}"
+                println("Stopping testcontainer $containerId - $imageName")
+                org.testcontainers.utility.ResourceReaper
+                        .instance()
+                        .stopAndRemoveContainer(containerId, imageName);</source>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-maven-plugin</artifactId>
+        <version>7.14.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>migrate</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <url>${db.url}</url>
+              <user>${db.username}</user>
+              <password>${db.password}</password>
+              <locations>
+                <location>filesystem:src/main/resources/db/migration</location>
+              </locations>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.jooq</groupId>
+        <artifactId>jooq-codegen-maven</artifactId>
+        <version>${jooq.version}</version>
+        <executions>
+          <execution>
+            <id>generate-jooq-sources</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <jdbc>
+                <url>${db.url}</url>
+                <user>${db.username}</user>
+                <password>${db.password}</password>
+              </jdbc>
+              <generator>
+                <generate>
+                  <pojos>true</pojos>
+                  <daos>true</daos>
+                  <springAnnotations>true</springAnnotations>
+                  <pojosEqualsAndHashCode>true</pojosEqualsAndHashCode>
+                  <javaTimeTypes>true</javaTimeTypes>
+                  <validationAnnotations>false</validationAnnotations>
+                </generate>
+                <database>
+                  <inputSchema>public</inputSchema>
+                  <includes>.*</includes>
+                  <excludes>flyway_schema_history</excludes>
+                </database>
+                <!-- Rename the generated POJOs and DAOs classes -->
+                <strategy>
+                  <matchers>
+                    <tables>
+                      <table>
+                        <pojoClass>
+                          <expression>JOOQ_$0</expression>
+                          <transform>PASCAL</transform>
+                        </pojoClass>
+                        <daoClass>
+                          <expression>$0_Repository</expression>
+                          <transform>PASCAL</transform>
+                        </daoClass>
+                      </table>
+                    </tables>
+                  </matchers>
+                </strategy>
+                <target>
+                  <clean>true</clean>
+                  <packageName>com.sivalabs.bookmarks.jooq</packageName>
+                  <directory>src/main/jooq</directory>
+                </target>
+              </generator>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sources>
+                <source>src/main/jooq</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin.version}</version>
@@ -278,7 +422,6 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>${jacoco-maven-plugin.version}</version>
-
         <executions>
           <execution>
             <id>pre-unit-tests</id>
@@ -322,35 +465,8 @@
                 </rule>
               </rules>
               <excludes>
-                <exclude>**/*Application.*</exclude>
-                <exclude>**/config/**</exclude>
-                <exclude>**/models/*</exclude>
-                <exclude>**/dtos/*</exclude>
-                <exclude>**/exceptions/*</exclude>
-                <exclude>**/*Constants*</exclude>
+                <exclude>com/sivalabs/bookmarks/jooq/**</exclude>
               </excludes>
-            </configuration>
-          </execution>
-          <execution>
-            <id>pre-integration-tests</id>
-            <goals>
-              <goal>prepare-agent-integration</goal>
-            </goals>
-            <configuration>
-              <!-- Sets the path to the file which contains the execution data. -->
-              <destFile>${jacoco.itReportFile}</destFile>
-            </configuration>
-          </execution>
-          <!-- Ensures that the code coverage report for integration tests is created after integration tests have been run -->
-          <execution>
-            <id>post-integration-tests</id>
-            <goals>
-              <goal>report-integration</goal>
-            </goals>
-            <phase>post-integration-test</phase>
-            <configuration>
-              <dataFile>${jacoco.itReportFile}</dataFile>
-              <outputDirectory>${jacoco.itReportFolder}</outputDirectory>
             </configuration>
           </execution>
         </executions>

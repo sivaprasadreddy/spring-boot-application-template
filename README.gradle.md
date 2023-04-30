@@ -7,7 +7,7 @@ This repository is a template for creating a Spring Boot application with common
 
 ## Features
 * Spring Boot
-* Spring Data JPA
+* jOOQ
 * PostgreSQL
 * Flyway for DB migration
 * Springdoc Open API
