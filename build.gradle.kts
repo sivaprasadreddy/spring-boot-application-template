@@ -61,7 +61,7 @@ tasks.withType<Test> {
 }
 
 jacoco {
-	toolVersion = "0.8.9"
+	toolVersion = "0.8.10"
 	//reportsDirectory.set(layout.buildDirectory.dir("customJacocoReportDir"))
 }
 
