@@ -7,7 +7,7 @@ plugins {
 	java
 	id("org.springframework.boot") version "3.1.0"
 	id("io.spring.dependency-management") version "1.1.0"
-	id("com.diffplug.spotless") version "6.18.0"
+	id("com.diffplug.spotless") version "6.19.0"
 	id("com.gorylenko.gradle-git-properties") version "2.4.1"
 	id("org.owasp.dependencycheck") version "8.2.1"
 	jacoco
