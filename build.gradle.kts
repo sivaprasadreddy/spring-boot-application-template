@@ -5,7 +5,7 @@ import java.util.*
 
 plugins {
 	java
-	id("org.springframework.boot") version "3.1.1"
+	id("org.springframework.boot") version "3.1.3"
 	id("io.spring.dependency-management") version "1.1.0"
 	id("com.diffplug.spotless") version "6.19.0"
 	id("com.gorylenko.gradle-git-properties") version "2.4.1"
