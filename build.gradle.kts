@@ -5,13 +5,13 @@ import java.util.*
 
 plugins {
 	java
-	id("org.springframework.boot") version "3.1.1"
-	id("io.spring.dependency-management") version "1.1.0"
-	id("com.diffplug.spotless") version "6.19.0"
+	id("org.springframework.boot") version "3.1.3"
+	id("io.spring.dependency-management") version "1.1.3"
+	id("com.diffplug.spotless") version "6.21.0"
 	id("com.gorylenko.gradle-git-properties") version "2.4.1"
 	id("org.owasp.dependencycheck") version "8.3.1"
 	jacoco
-	id("org.sonarqube") version "4.2.1.3168"
+	id("org.sonarqube") version "4.3.0.3225"
 }
 
 group = "com.sivalabs"
@@ -38,7 +38,7 @@ dependencies {
 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 	implementation("io.micrometer:micrometer-tracing-bridge-otel")
 	implementation("io.opentelemetry:opentelemetry-exporter-zipkin")
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.1.1</version>
+    <version>3.1.3</version>
     <relativePath />
     <!-- lookup parent from repository -->
   </parent>
@@ -15,13 +15,11 @@
   <description>Spring Boot Application Template</description>
   <properties>
     <java.version>17</java.version>
-    <springdoc-openapi.version>2.1.0</springdoc-openapi.version>
+    <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
 
-    <spotless.version>2.37.0</spotless.version>
+    <spotless.version>2.39.0</spotless.version>
     <dependency-check-maven.version>8.3.1</dependency-check-maven.version>
-    <properties-maven-plugin.version>1.1.0</properties-maven-plugin.version>
-    <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
-    <maven-failsafe-plugin.version>3.1.2</maven-failsafe-plugin.version>
+    <properties-maven-plugin.version>1.2.0</properties-maven-plugin.version>
     <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
     <jacoco.minimum.coverage>80%</jacoco.minimum.coverage>
@@ -149,7 +147,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven-surefire-plugin.version}</version>
         <configuration>
           <runOrder>alphabetical</runOrder>
           <reportsDirectory>${junit.utReportFolder}</reportsDirectory>
@@ -163,7 +160,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${maven-failsafe-plugin.version}</version>
         <configuration>
           <classesDirectory>${project.build.outputDirectory}</classesDirectory>
           <runOrder>alphabetical</runOrder>
