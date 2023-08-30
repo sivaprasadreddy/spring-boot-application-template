@@ -4,13 +4,13 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
 plugins {
 	java
-	id("org.springframework.boot") version "3.1.0"
-	id("io.spring.dependency-management") version "1.1.0"
-	id("com.diffplug.spotless") version "6.18.0"
+	id("org.springframework.boot") version "3.1.3"
+	id("io.spring.dependency-management") version "1.1.3"
+	id("com.diffplug.spotless") version "6.21.0"
 	id("com.gorylenko.gradle-git-properties") version "2.4.1"
-	id("org.owasp.dependencycheck") version "8.2.1"
+	id("org.owasp.dependencycheck") version "8.3.1"
 	jacoco
-	id("org.sonarqube") version "4.0.0.2929"
+	id("org.sonarqube") version "4.3.0.3225"
 	id("nu.studer.jooq") version "8.2"
 }
 
@@ -38,7 +38,7 @@ dependencies {
 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 	implementation("io.micrometer:micrometer-tracing-bridge-otel")
 	implementation("io.opentelemetry:opentelemetry-exporter-zipkin")
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -128,7 +128,7 @@ tasks.withType<Test> {
 }
 
 jacoco {
-	toolVersion = "0.8.9"
+	toolVersion = "0.8.10"
 	//reportsDirectory.set(layout.buildDirectory.dir("customJacocoReportDir"))
 }
 
