@@ -17,7 +17,7 @@
     <java.version>17</java.version>
     <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
 
-    <spotless.version>2.39.0</spotless.version>
+    <spotless.version>2.46.1</spotless.version>
     <dependency-check-maven.version>8.3.1</dependency-check-maven.version>
     <properties-maven-plugin.version>1.2.0</properties-maven-plugin.version>
     <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
