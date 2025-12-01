@@ -13,8 +13,7 @@ This repository is a template for creating a Spring Boot application with common
 * Springdoc Open API
 * JaCoCo code coverage check
 * SonarQube code quality check
-* OWASP Dependency Check
-* JUnit 5
+* JUnit
 * Testcontainers for testing & Local Dev
 * GitHub Actions
 * DockerCompose Deployment
@@ -71,21 +70,12 @@ You can configure the sonar properties in `sonar-project.properties` and run the
 $ ./mvnw initialize sonar:sonar -Dsonar.login=$SONAR_TOKEN
 ```
 
-### OWASP Dependency Check
-The [dependency-check-maven](https://jeremylong.github.io/DependencyCheck/dependency-check-maven/) is used to check
-for security vulnerabilities in the used libraries.
-
-```shell
-$ ./mvnw dependency-check:check
-```
-You can see the generated report at `target/dependency-check-report.html`
-
 ### Create Docker Image
 The [spring-boot-maven-plugin](https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/htmlsingle/) provides 
 the capability to create an [OCI image](https://github.com/opencontainers/image-spec) from a jar or war file using [Cloud Native Buildpacks](https://buildpacks.io/) (CNB).
 
 ```shell
-$ ./mvnw spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=$DOCKER_USERNAME/$DOCKER_IMAGE_NAME
+$ ./mvnw spring-boot:build-image -DskipTests -DdockerImageName=$DOCKER_USERNAME/$DOCKER_IMAGE_NAME
 ```
 
 ### Run application using docker-compose

@@ -14,20 +14,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/users")
-public class UserController {
+class UserController {
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping
-    public List<User> getUsers() {
+    List<User> getUsers() {
         return userService.getAllUsers();
     }
 
     @PostMapping
-    public ResponseEntity<User> save(@Valid @RequestBody User user) {
+    ResponseEntity<User> save(@Valid @RequestBody User user) {
         User savedUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }

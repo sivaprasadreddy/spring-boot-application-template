@@ -1,53 +1,57 @@
 package com.sivalabs.myapp.users.web.controller;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import com.sivalabs.myapp.TestcontainersConfig;
+import com.sivalabs.myapp.users.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.test.web.servlet.assertj.MockMvcTester;
+import org.springframework.test.web.servlet.assertj.MvcTestResult;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
-@Testcontainers
+@SpringBootTest(webEnvironment = RANDOM_PORT)
 @Import(TestcontainersConfig.class)
+@AutoConfigureMockMvc
 class UserControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private MockMvcTester mockMvcTester;
 
     @Test
     void shouldFetchBookmarksByPageNumber() throws Exception {
-        this.mockMvc.perform(get("/api/users")).andExpect(status().isOk());
+        MvcTestResult testResult = mockMvcTester.get().uri("/api/users").exchange();
+        assertThat(testResult).hasStatusOk();
     }
 
     @Test
     void shouldCreateBookmarkSuccessfully() throws Exception {
-        this.mockMvc
-                .perform(
-                        post("/api/users")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(
-                                        """
-                                                {
-                                                    "email": "siva@gmail.com",
-                                                    "password": "secret",
-                                                    "name": "Siva"
-                                                }
-                                                """))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", notNullValue()))
-                .andExpect(jsonPath("$.email", equalTo("siva@gmail.com")))
-                .andExpect(jsonPath("$.name", equalTo("Siva")));
+        MvcTestResult testResult = mockMvcTester
+                .post()
+                .uri("/api/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                            "email": "siva@gmail.com",
+                            "password": "secret",
+                            "name": "Siva"
+                        }
+                        """)
+                .exchange();
+
+        assertThat(testResult)
+                .hasStatus(HttpStatus.CREATED)
+                .bodyJson()
+                .convertTo(User.class)
+                .satisfies(user -> {
+                    assertThat(user.getId()).isNotNull();
+                    assertThat(user.getEmail()).isEqualTo("siva@gmail.com");
+                    assertThat(user.getName()).isEqualTo("Siva");
+                });
     }
 }

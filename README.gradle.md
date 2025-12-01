@@ -13,8 +13,7 @@ This repository is a template for creating a Spring Boot application with common
 * Springdoc Open API
 * JaCoCo code coverage check
 * SonarQube code quality check
-* OWASP Dependency Check
-* JUnit 5
+* JUnit
 * Testcontainers for testing & Local Dev
 * GitHub Actions
 * DockerCompose Deployment
@@ -70,15 +69,6 @@ You can configure the sonar properties in `sonar-project.properties` and run the
 ```shell
 $ ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN
 ```
-
-### OWASP Dependency Check
-The [OWASP dependency-check-gradle plugin](http://jeremylong.github.io/DependencyCheck/dependency-check-gradle/index.html) is used to check
-for security vulnerabilities in the used libraries.
-
-```shell
-$ ./gradlew dependencyCheckAnalyze
-```
-You can see the generated report at `target/dependency-check-report.html`
 
 ### Create Docker Image
 The [spring-boot-gradle-plugin](https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/) provides 

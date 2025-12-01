@@ -19,21 +19,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: 25
           distribution: 'temurin'
           cache: 'maven'
 
       - name: Test
         run: ./mvnw verify
-
-      - if: ${{ github.ref == 'refs/heads/main' }}
-        name: OWASP Dependency Check
-        run: ./mvnw dependency-check:check
 
       - if: ${{ github.ref == 'refs/heads/main' }}
         name: Sonar Scan

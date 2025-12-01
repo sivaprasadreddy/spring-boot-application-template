@@ -19,21 +19,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: 25
           distribution: 'temurin'
           cache: 'gradle'
 
       - name: Test
         run: ./gradlew build
-
-      - if: ${{ github.ref == 'refs/heads/main' }}
-        name: OWASP Dependency Check
-        run: ./gradlew dependencyCheckAnalyze
 
       - if: ${{ github.ref == 'refs/heads/master' }}
         name: Sonar Scan

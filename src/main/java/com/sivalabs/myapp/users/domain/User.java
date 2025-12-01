@@ -8,9 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import org.jspecify.annotations.NullUnmarked;
 
 @Entity
 @Table(name = "users")
+@NullUnmarked
 public class User {
 
     @Id
@@ -19,16 +21,13 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    @NotEmpty(message = "Email is required")
-    private String email;
+    @NotEmpty(message = "Email is required") private String email;
 
     @Column(nullable = false)
-    @NotEmpty(message = "Password is required")
-    private String password;
+    @NotEmpty(message = "Password is required") private String password;
 
     @Column(nullable = false)
-    @NotEmpty(message = "Name is required")
-    private String name;
+    @NotEmpty(message = "Name is required") private String name;
 
     public User() {}
 

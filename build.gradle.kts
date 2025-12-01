@@ -1,22 +1,26 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
-import java.io.Reader
-import java.util.*
+import net.ltgt.gradle.errorprone.errorprone
 
 plugins {
-	java
-	id("org.springframework.boot") version "3.1.3"
-	id("io.spring.dependency-management") version "1.1.3"
-	id("com.diffplug.spotless") version "6.21.0"
-	id("com.gorylenko.gradle-git-properties") version "2.4.1"
-	id("org.owasp.dependencycheck") version "8.3.1"
-	jacoco
-	id("org.sonarqube") version "4.3.0.3225"
+    id("java")
+	id("org.springframework.boot") version "4.0.0"
+	id("io.spring.dependency-management") version "1.1.7"
+	id("com.diffplug.spotless") version "8.1.0"
+	id("com.gorylenko.gradle-git-properties") version "2.5.4"
+    id("jacoco")
+	id("org.sonarqube") version "7.1.0.6387"
+    id("net.ltgt.errorprone") version "4.3.0"
 }
 
 group = "com.sivalabs"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_17
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
 
 configurations {
 	compileOnly {
@@ -29,22 +33,40 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-webmvc")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.flywaydb:flyway-core")
+    implementation("org.springframework.boot:spring-boot-starter-flyway")
+    implementation("org.flywaydb:flyway-database-postgresql")
 	runtimeOnly("org.postgresql:postgresql")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
-	implementation("io.micrometer:micrometer-tracing-bridge-otel")
-	implementation("io.opentelemetry:opentelemetry-exporter-zipkin")
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.0")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.springframework.boot:spring-boot-testcontainers")
-	testImplementation("org.testcontainers:junit-jupiter")
-	testImplementation("org.testcontainers:postgresql")
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-flyway-test")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:testcontainers-junit-jupiter")
+    testImplementation("org.testcontainers:testcontainers-postgresql")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    errorprone("com.google.errorprone:error_prone_core:2.45.0") // https://github.com/google/error-prone
+    errorprone("com.uber.nullaway:nullaway:0.12.12")
+}
+
+tasks.withType<JavaCompile> {
+    options.errorprone  {
+        disableAllChecks = true // Other error prone checks are disabled
+        option("NullAway:OnlyNullMarked", "true") // Enable nullness checks only in null-marked code
+        error("NullAway") // bump checks from warnings (default) to errors
+        option("NullAway:JSpecifyMode", "true") // https://github.com/uber/NullAway/wiki/JSpecify-Support
+    }
+    // Keep a JDK 25 baseline
+    options.release = 25
 }
 
 tasks.withType<Test> {
@@ -59,7 +81,7 @@ tasks.withType<Test> {
 }
 
 jacoco {
-	toolVersion = "0.8.10"
+	toolVersion = "0.8.14"
 	//reportsDirectory.set(layout.buildDirectory.dir("customJacocoReportDir"))
 }
 
@@ -99,25 +121,9 @@ spotless {
 	java {
 		importOrder()
 		removeUnusedImports()
-		palantirJavaFormat("2.30.0")
+		palantirJavaFormat("2.83.0")
 		formatAnnotations()
 	}
-}
-
-// Reference doc : https://jeremylong.github.io/DependencyCheck/dependency-check-gradle/configuration.html
-dependencyCheck {
-	// the default artifact types that will be analyzed.
-	analyzedTypes = listOf("jar")
-	// CI-tools usually needs XML-reports, but humans needs HTML.
-	formats = listOf("HTML", "JUNIT")
-	// Specifies if the build should be failed if a CVSS score equal to or above a specified level is identified.
-	// failBuildOnCVSS = 8.toFloat()
-	// Output directory where the report should be generated
-	outputDirectory = "$buildDir/reports/dependency-vulnerabilities"
-	// specify a list of known issues which contain false-positives to be suppressed
-	//suppressionFiles = ["$projectDir/config/dependencycheck/dependency-check-suppression.xml"]
-	// Sets the number of hours to wait before checking for new updates from the NVD, defaults to 4.
-	cveValidForHours = 24
 }
 
 sonarqube {
@@ -132,7 +138,7 @@ sonarqube {
 		property("sonar.exclusions", "src/main/java/**/config/*.*,src/main/java/**/entities/*.*,src/main/java/**/models/*.*,src/main/java/**/exceptions/*.*,src/main/java/**/utils/*.*,src/main/java/**/*Application.*")
 		property("sonar.test.inclusions", "**/*Test.java,**/*IntegrationTest.java,**/*IT.java")
 		property("sonar.java.codeCoveragePlugin", "jacoco")
-		property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/jacoco/test/jacoco.xml")
-		property("sonar.junit.reportPaths", "$buildDir/test-results/test")
+		property("sonar.coverage.jacoco.xmlReportPaths", "build/jacoco/test/jacoco.xml")
+		property("sonar.junit.reportPaths", "build/test-results/test")
 	}
 }

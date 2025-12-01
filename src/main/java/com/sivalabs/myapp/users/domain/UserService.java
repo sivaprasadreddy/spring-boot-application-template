@@ -5,14 +5,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
