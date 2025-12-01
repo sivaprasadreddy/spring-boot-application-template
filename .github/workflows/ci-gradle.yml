@@ -31,13 +31,13 @@ jobs:
       - name: Test
         run: ./gradlew build
 
-      - if: ${{ github.ref == 'refs/heads/master' }}
-        name: Sonar Scan
-        run: ./gradlew sonarqube
-        env:
-          SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
+#      - if: ${{ github.ref == 'refs/heads/main' }}
+#        name: Sonar Scan
+#        run: ./gradlew sonarqube
+#        env:
+#          SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
 
-      - if: ${{ github.ref == 'refs/heads/master' }}
+      - if: ${{ github.ref == 'refs/heads/main' }}
         name: Build and Publish Docker Image
         run: |
           ./gradlew bootBuildImage --imageName=${{ env.DOCKER_IMAGE_NAME }}
